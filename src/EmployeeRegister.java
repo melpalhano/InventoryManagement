@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 public class EmployeeRegister {
-    private Employee employee;
+    Employee employee;
     public ArrayList<Employee> employeeList = new ArrayList <Employee>();
     private int id;
     private String name;
@@ -10,7 +10,7 @@ public class EmployeeRegister {
     private String password;
     public EmployeeRegister(){}
     Scanner input = new Scanner(System.in);
-    public void registerProcess(){
+    public void RegisterProcess(){
         boolean isValid = false;
         boolean isNull = false;
         boolean isNameRead = false;
@@ -27,7 +27,7 @@ public class EmployeeRegister {
             } catch (InputMismatchException e) {
                 System.err.println("The ID must be numeric!");
                 input.nextLine();
-                System.out.println(" ");
+                System.out.println();
             }
         } while (!isValid);
 
@@ -76,13 +76,21 @@ public class EmployeeRegister {
         employee = new Employee(id, name, "", email, password);
         employeeList.add(employee);
 
-        for (int i = 0; i < employeeList.size(); i++) {
+        System.out.println();
+        System.out.println("Successfully registered!");
+
+        /*for (int i = 0; i < employeeList.size(); i++) {
             Employee employee = employeeList.get(i);
             System.out.println("Employee " + (i + 1) + ":");
             System.out.println("Name: " + employee.getNameEmployee());
             System.out.println("Email: " + employee.getEmail());
             System.out.println("Password: " + employee.getPassword());
             System.out.println(); // Adding an empty line for clarity
-        }
+        }*/
     }
+
+    public ArrayList<Employee> getEmployeeList() {
+        return employeeList;
+    }
+
 }

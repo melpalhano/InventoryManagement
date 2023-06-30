@@ -1,9 +1,11 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.ArrayList;
 public class SystemMenu {
-    private Login login;
-    private EmployeeRegister employeeRegister;
-    private ProductStock productStock;
+    EmployeeRegister employeeRegister = new EmployeeRegister();
+    ArrayList<Employee> employeeList = employeeRegister.getEmployeeList();
+    Login login = new Login(employeeList);
+    ProductStock productStock = new ProductStock();
 
     Scanner input = new Scanner(System.in);
 
@@ -45,17 +47,22 @@ public class SystemMenu {
 
             switch (entry) {
                 case 1:
-                    //login
+                    login.UserLogin();
                     break;
                 case 2:
-                    employeeRegister = new EmployeeRegister();
                     employeeRegister.RegisterProcess();
                     break;
                 case 3:
-                    //stock management
-                    break;
+                    if (login.getIsLoggedIn() == false){
+                        System.out.println("You must be logged in!");
+                        break;
+                    } else{
+                        productStock.AllProductHandling();
+                        break;
+                    }
                 case 4:
-                    System.out.println("Hope to see you again!");
+                    System.out.println();
+                    System.out.println("Logging off!");
                     break;
 
             }

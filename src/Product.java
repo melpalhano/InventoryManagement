@@ -54,4 +54,8 @@ public class Product {
         this.quantityProduct = quantityProduct;
     }
 
+    public void AllProductHandling(){
+       System.out.println();
+    }
+
 }

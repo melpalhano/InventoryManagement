@@ -246,6 +246,59 @@ public class ProductStock extends Product implements ProductControl {
         }
     }
 
+    @Override
+    public void AllProductHandling() {
+        boolean isValid = false;
+        int entry = 0;
+
+        do {
+            do {
+                try{
+                    System.out.println("Welcome to the Product Management Screen!");
+                    System.out.println();
+                    System.out.println("1 - Insert Product");
+                    System.out.println("2 - Show Product");
+                    System.out.println("3 - Update Product");
+                    System.out.println("4 - Delete Product");
+                    System.out.println("5 - Quit");
+                    System.out.println();
+                    System.out.print("Choose an option: ");
+                    entry = input.nextInt();
+
+                    if (entry <= 0 || entry > 5){
+                        System.err.println("Please, choose a valid option!");
+                        System.out.println();
+                    } else{
+                        isValid = true;
+                    }
+
+                    input.nextLine();
+                } catch(InputMismatchException e){
+                    System.err.println("Please, choose a valid option!");
+                    input.nextLine();
+                    System.out.println();
+                }
+        }while(!isValid);
+
+            switch (entry) {
+                case 1:
+                    InsertProduct();
+                    break;
+                case 2:
+                    ShowProduct();
+                    break;
+                case 3:
+                    UpdateProduct();
+                    break;
+                case 4:
+                    DeleteProduct();
+                    break;
+                case 5:
+                    System.out.println("Exiting!");
+                    break;
+            }
+        } while(entry != 5);
+    }
 }
 
 
