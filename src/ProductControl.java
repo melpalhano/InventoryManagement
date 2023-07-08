@@ -1,6 +1,6 @@
 public interface ProductControl {
-    void InsertProduct();
-    void ShowProduct();
-    void UpdateProduct();
-    void DeleteProduct();
+    void insertProduct(int param);
+    void showProduct(int param);
+    void updateProduct(int param);
+    void deleteProduct(int param);
 }

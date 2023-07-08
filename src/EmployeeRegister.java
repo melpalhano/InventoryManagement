@@ -1,96 +1,108 @@
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-public class EmployeeRegister {
-    Employee employee;
-    public ArrayList<Employee> employeeList = new ArrayList <Employee>();
-    private int id;
-    private String name;
-    private String email;
-    private String password;
-    public EmployeeRegister(){}
-    Scanner input = new Scanner(System.in);
-    public void RegisterProcess(){
-        boolean isValid = false;
-        boolean isNull = false;
-        boolean isNameRead = false;
-        boolean isEmailRead = false;
-        boolean isPasswordRead = false;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import resources.DatabaseConnection;
+import java.sql.Connection;
 
-        do {
-            try {
-                System.out.print("Insert your employee ID: ");
-                id = input.nextInt();
-                isValid = true;
-                // Cleaning buffer
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.err.println("The ID must be numeric!");
-                input.nextLine();
-                System.out.println();
-            }
-        } while (!isValid);
+public class EmployeeRegister extends JFrame implements ActionListener {
+    private final JTextField jUserTextField;
+    private final JTextField jPasswordTextField;
+    private final JButton jBackButton;
+    private final JButton jConfirmButton;
 
-        do {
-            try {
-                if (!isNameRead) {
-                    System.out.print("Insert your name: ");
-                    name = input.nextLine();
+    public EmployeeRegister(){
+        // Creating main screen
+        setTitle("Register");
+        setSize(500, 150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setLayout(null);
 
-                    if (name.isEmpty()) {
-                        throw new IllegalArgumentException("Name cannot be empty!");
-                    }
+        // Adding labels for text fields
+        JLabel jUserLabel = new JLabel("Create your user:");
+        //jUserLabel.setBounds(10, 10, 90,50);
+        jUserLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-                    isNameRead = true;
-                }
+        JLabel jPasswordLabel = new JLabel("Create your password:");
+        //jUserLabel.setBounds(10, 20, 90,50);
+        jPasswordLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-                if (!isEmailRead) {
-                    System.out.print("Insert your email: ");
-                    email = input.nextLine();
 
-                    if (email.isEmpty()) {
-                        throw new IllegalArgumentException("Email cannot be empty!");
-                    }
+        // Adding text fields
+        jUserTextField = new JTextField();
+        //jUserTextField.setBounds(40, 10, 90,50);
 
-                    isEmailRead = true;
-                }
+        jPasswordTextField = new JTextField();
+        //jUserTextField.setBounds(40, 20, 90,50);
 
-                if (!isPasswordRead) {
-                    System.out.print("Insert your password: ");
-                    password = input.nextLine();
 
-                    if (password.isEmpty()) {
-                        throw new IllegalArgumentException("Password cannot be empty!");
-                    }
+        //Adding buttons
+        jBackButton = new JButton("Back");
+        jBackButton.setFont(new Font("Arial", Font.BOLD, 14));
+        //jLoginButton.setBounds(100, 200, 250, 70);
 
-                    isPasswordRead = true;
-                }
+        jConfirmButton = new JButton("Confirm");
+        jConfirmButton.setFont(new Font("Arial", Font.BOLD, 14));
+        //jRegisterButton.setBounds(200, 200, 250, 70);
 
-                isNull = true;
-            } catch(IllegalArgumentException e){
-                System.err.println(e.getMessage());
-                System.out.println();
-            }
-        } while (!isNull);
 
-        employee = new Employee(id, name, "", email, password);
-        employeeList.add(employee);
+        // Adding listener to buttons
+        jBackButton.addActionListener(this);
+        jConfirmButton.addActionListener(this);
 
-        System.out.println();
-        System.out.println("Successfully registered!");
 
-        /*for (int i = 0; i < employeeList.size(); i++) {
-            Employee employee = employeeList.get(i);
-            System.out.println("Employee " + (i + 1) + ":");
-            System.out.println("Name: " + employee.getNameEmployee());
-            System.out.println("Email: " + employee.getEmail());
-            System.out.println("Password: " + employee.getPassword());
-            System.out.println(); // Adding an empty line for clarity
-        }*/
+        // Applying a 3x3 grid layout to the components
+        setLayout(new GridLayout(3,3));
+
+
+        //Adding fields to screen
+        add(jUserLabel);
+        add(jUserTextField);
+        add(jPasswordLabel);
+        add(jPasswordTextField);
+        add(jBackButton);
+        add(jConfirmButton);
+
+        // Centralizing the information and making the screen visible, respectively
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
-    public ArrayList<Employee> getEmployeeList() {
-        return employeeList;
-    }
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        Employee employee = new Employee();
 
+        if (event.getSource() == jBackButton){
+            Login login = new Login();
+            login.setVisible(true);
+            dispose();
+        } else if (event.getSource() == jConfirmButton){
+            try {
+                employee.setUser(jUserTextField.getText());
+                employee.setPassword(jPasswordTextField.getText());
+
+                if (employee.getUser().isEmpty() && employee.getPassword().isEmpty()) {
+                    throw new IllegalArgumentException("Fields cannot be empty!");
+                } else if (employee.getUser().isEmpty()) {
+                    throw new IllegalArgumentException("User field cannot be empty!");
+                } else if (employee.getPassword().isEmpty()) {
+                    throw new IllegalArgumentException("Password field cannot be empty!");
+                }
+
+                // Banks logic
+                System.out.println("User: " + employee.getUser());
+                System.out.println("Passwd: " + employee.getPassword());
+
+                DatabaseConnection db = new DatabaseConnection();
+                Connection connection=db.connect_to_db("inventory","postgres","admin");
+                db.insertEmployee(connection, employee.getUser(),employee.getPassword());
+
+
+                // Success message
+                JOptionPane.showMessageDialog(null, "User created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IllegalArgumentException exception) {
+                JOptionPane.showMessageDialog(null, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }

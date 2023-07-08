@@ -1,304 +1,205 @@
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.InputMismatchException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ProductStock extends Product implements ProductControl {
-    private static final Scanner input = new Scanner(System.in);
-    private static final ArrayList<Product> productManagement = new ArrayList<>();
+public class ProductStock extends JFrame implements ActionListener, ProductControl {
+    private final JButton jInsertProduct;
+    private final JButton jShowProduct;
+    private final JButton jUpdateProduct;
+    private final JButton jDeleteProduct;
+    private final JButton jLogOutButton;
+    private final JComboBox<String> jComboButton;
+    public ProductStock(){
+        // Creating main screen
+        setTitle("Product Management");
+        setSize(800, 500);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    public ProductStock() {
+        // Create a panel to hold the components
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        // Create the title label and add it to the main panel
+        JLabel titleLabel = new JLabel("Product Inventory");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Create the panel for the GridLayout and add it to the main panel
+        JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(2,2, 10, 10));
+        mainPanel.add(gridPanel, BorderLayout.CENTER);
+
+        // Creating insert container to use inside the GridLayout
+        JPanel insertContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        // Using empty borders to have padding and centralize the buttons
+        // inside the FlowLayout
+        insertContainer.setBorder(BorderFactory.createEmptyBorder(50, 15, 0, 0));
+
+        jInsertProduct = new JButton("Insert Product");
+        // Setting button size
+        jInsertProduct.setPreferredSize(new Dimension(400,80));
+        // Inserting button in the container
+        insertContainer.add(jInsertProduct);
+
+
+        // Creating show container to use inside the GridLayout
+        JPanel showContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        // Using empty borders to have padding and centralize the buttons
+        // inside the FlowLayout
+        showContainer.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 15));
+
+        jShowProduct = new JButton("Show Product");
+        // Setting button size
+        jShowProduct.setPreferredSize(new Dimension(400,80));
+        // Inserting button in the container
+        showContainer.add(jShowProduct);
+
+
+        // Creating update container to use inside the GridLayout
+        JPanel updateContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        // Using empty borders to have padding and centralize the buttons
+        // inside the FlowLayout
+        updateContainer.setBorder(BorderFactory.createEmptyBorder(50, 15, 0, 0));
+
+        jUpdateProduct = new JButton("Update Product");
+        // Setting button size
+        jUpdateProduct.setPreferredSize(new Dimension(400,80));
+        // Inserting button in the container
+        updateContainer.add(jUpdateProduct);
+
+
+        // Creating delete container to use inside the GridLayout
+        JPanel deleteContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        // Using empty borders to have padding and centralize the buttons
+        // inside the FlowLayout
+        deleteContainer.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 15));
+
+        jDeleteProduct = new JButton("Delete Product");
+        // Setting button size
+        jDeleteProduct.setPreferredSize(new Dimension(400,80));
+        // Inserting button in the container
+        deleteContainer.add(jDeleteProduct);
+
+
+        // Add components to the gridPanel
+        gridPanel.add(insertContainer);
+        gridPanel.add(showContainer);
+        gridPanel.add(updateContainer);
+        gridPanel.add(deleteContainer);
+
+        // Adding another JPanel to the bottom of the BorderLayout
+        JPanel bottomPanel = new JPanel();
+        // Adding flow layout so we can move the button around
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        // Adding a back button
+        jLogOutButton = new JButton("Log Out");
+        jLogOutButton.setPreferredSize(new Dimension(390, 30));
+
+        // Creating a combo box button
+        jComboButton = new JComboBox<String>(new String[]{"Select an option:", "Physical Inventory", "Virtual Inventory"});
+        jComboButton.setPreferredSize(new Dimension(390, 30));
+        // Creating an empty label to separate the two buttons
+        JLabel invisibleSpace = new JLabel("");
+
+        // Adding back button to the main BorderLayout panel
+        bottomPanel.add(jLogOutButton);
+        // Adding the empty label
+        bottomPanel.add(invisibleSpace);
+        // Adding the combo button
+        bottomPanel.add(jComboButton);
+        // Adding the new panel to the bottom part of the Border Layout
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+
+        // Set the main panel as the content pane of the JFrame
+        setContentPane(mainPanel);
+
+        // Adding Listeners to buttons
+        jInsertProduct.addActionListener(this);
+        jShowProduct.addActionListener(this);
+        jUpdateProduct.addActionListener(this);
+        jDeleteProduct.addActionListener(this);
+        jLogOutButton.addActionListener(this);
+        jComboButton.addActionListener(this);
+
+
+        // Centralizing the information
+        setLocationRelativeTo(null);
     }
 
-    public void InsertProduct() {
-        boolean continueAdding = true;
+    
 
-        while (continueAdding) {
-            int idProduct;
-            String nameProduct;
-            double priceProduct;
-            int quantityProduct;
-
-            try {
-                System.out.print("\n------Add Product----\n");
-                System.out.print("Enter product ID: ");
-                idProduct = input.nextInt();
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid, product ID must be a number!");
-                input.nextLine();
-                continue;
-            }
-
-            if (idProduct <= 0) {
-                System.out.println("Invalid, product ID must be greater than 0!");
-                continue;
-            }
-
-            boolean idExists = false; // Check if the entered ID already exists
-            for (Product product : productManagement) {
-                if (product.getIdProduct() == idProduct) {
-                    idExists = true;
-                    break;
-                }
-            }
-
-            if (idExists) {
-                System.out.println("Product with ID " + idProduct + " already exists!");
-                continue;
-            }
-
-            System.out.print("Enter product name: ");
-            nameProduct = input.nextLine();
-
-            if (nameProduct.isEmpty()) {
-                System.out.println("Product name cannot be empty!");
-                continue;
-            }
-
-            try {
-                System.out.print("Enter product price: ");
-                priceProduct = input.nextDouble();
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid, product price must be a number!");
-                input.nextLine();
-                continue;
-            }
-
-            if (priceProduct <= 0) {
-                System.out.println("Invalid, product price must be greater than 0!");
-                continue;
-            }
-
-            try {
-                System.out.print("Enter product quantity: ");
-                quantityProduct = input.nextInt();
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid! Product quantity must be a number");
-                input.nextLine();
-                continue;
-            }
-
-            if (quantityProduct <= 0) {
-                System.out.println("Invalid! Product quantity must be greater than 0");
-                continue;
-            }
-
-            Product product = new Product(idProduct, nameProduct, priceProduct, quantityProduct);
-            productManagement.add(product);
-
-            System.out.println("Product added successfully.");
-
-            System.out.print("Do you want to add another product? (yes/no): ");
-            String continueInput = input.nextLine();
-
-            if (continueInput.equalsIgnoreCase("no")) {
-                continueAdding = false;
-            }
-        }
-    }
-
-    public void ShowProduct() {
-        try {
-            if (productManagement.isEmpty()) {
-                System.out.println("No products found");
-            } else {
-                System.out.print("\n------Show Product----\n");
-                System.out.println("Products in stock:");
-                System.out.printf("%-10s %-20s %-10s %-10s\n", "ID", "Name", "Price", "Quantity");
-                System.out.println("-------------------------------------------------------");
-                for (Product product : productManagement) {
-                    System.out.printf("%-10d %-20s %-10.2f %-10d\n", product.getIdProduct(), product.getNameProduct(), product.getPriceProduct(), product.getQuantityProduct());
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("An error occurred");
-            e.printStackTrace();
-        }
-    }
-
-
-    public void UpdateProduct() {
-        if (productManagement.isEmpty()) {
-            System.out.println("No products found...");
-            return;
-        }
-
-        boolean continueUpdating = true;
-        while (continueUpdating) {
-            System.out.print("\n------Update Product----\n");
-            System.out.print("Enter the product ID to update: ");
-            int productId;
-            try {
-                productId = input.nextInt();
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid,please enter a valid product ID");
-                input.nextLine();
-                continue;
-            }
-
-            Product productToUpdate = null;
-            for (Product product : productManagement) {
-                if (product.getIdProduct() == productId) {
-                    productToUpdate = product;
-                    break;
-                }
-            }
-
-            if (productToUpdate == null) {
-                System.out.println("Product with ID " + productId + " not found");
-                continue;
-            }
-
-            System.out.print("Enter product name: ");
-            String newName = input.nextLine();
-            if (newName.trim().isEmpty()) {
-                System.out.println("Invalid, product name cannot be empty!");
-                continue;
-            }
-            productToUpdate.setNameProduct(newName);
-
-            System.out.print("Enter product price: ");
-            double newPrice;
-            try {
-                newPrice = input.nextDouble();
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid, please enter a valid price!");
-                input.nextLine();
-                continue;
-            }
-            if (newPrice <= 0) {
-                System.out.println("Invalid, product price must be greater than 0!");
-                continue;
-            }
-            productToUpdate.setPriceProduct(newPrice);
-
-            System.out.print("Enter product quantity: ");
-            int newQuantity;
-            try {
-                newQuantity = input.nextInt();
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid, please enter a valid quantity!");
-                input.nextLine();
-                continue;
-            }
-            if (newQuantity <= 0) {
-                System.out.println("Invalid, product quantity must be greater than 0!");
-                continue;
-            }
-            productToUpdate.setQuantityProduct(newQuantity);
-
-            System.out.println("Product updated successfully");
-
-            System.out.print("Do you want to update another product? (yes/no): ");
-            String continueInput = input.nextLine();
-
-            if (continueInput.equalsIgnoreCase("no")) {
-                continueUpdating = false;
-            }
-        }
-    }
-
-
-    public void DeleteProduct() {
-        if (productManagement.isEmpty()) {
-            System.out.println("No products found");
-            return;
-        }
-
-        boolean continueDeleting = true;
-        while (continueDeleting) {
-            System.out.println("\n------Delete Product------\n");
-            System.out.print("Enter the product ID to delete: ");
-            int productId;
-            try {
-                productId = input.nextInt();
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid! Please enter a valid product ID");
-                input.nextLine();
-                continue;
-            }
-
-            boolean productFound = false;
-            for (Product product : productManagement) {
-                if (product.getIdProduct() == productId) {
-                    productManagement.remove(product);
-                    productFound = true;
-                    System.out.println("Product deleted successfully");
-                    break;
-                }
-            }
-
-            if (!productFound) {
-                System.out.println("Product with ID " + productId + " not found");
-            }
-            System.out.print("Do you want to delete another product? (yes/no): ");
-            String continueInput = input.nextLine();
-
-            if (continueInput.equalsIgnoreCase("no")) {
-                continueDeleting = false;
-            }
+    @Override
+    public void insertProduct(int param) {
+        if (param != 0){
+           InsertScreen insertScreen = new InsertScreen(param);
+           insertScreen.setVisible(true);
+           dispose();
         }
     }
 
     @Override
-    public void AllProductHandling() {
-        boolean isValid = false;
-        int entry = 0;
+    public void showProduct(int param) {
+        if (param != 0){
+            ShowScreen showScreen = new ShowScreen(param);
+            showScreen.setVisible(true);
+            dispose();
+        }
+    }
 
-        do {
-            do {
-                try{
-                    System.out.println("Welcome to the Product Management Screen!");
-                    System.out.println();
-                    System.out.println("1 - Insert Product");
-                    System.out.println("2 - Show Product");
-                    System.out.println("3 - Update Product");
-                    System.out.println("4 - Delete Product");
-                    System.out.println("5 - Quit");
-                    System.out.println();
-                    System.out.print("Choose an option: ");
-                    entry = input.nextInt();
+    @Override
+    public void updateProduct(int param) {
+        if (param != 0){
+            UpdateScreen updateScreen = new UpdateScreen(param);
+            updateScreen.setVisible(true);
+            dispose();
+        }
+    }
 
-                    if (entry <= 0 || entry > 5){
-                        System.err.println("Please, choose a valid option!");
-                        System.out.println();
-                    } else{
-                        isValid = true;
-                    }
+    @Override
+    public void deleteProduct(int param) {
+        if (param != 0){
+            DeleteScreen deleteScreen = new DeleteScreen(param);
+            deleteScreen.setVisible(true);
+            dispose();
+        }
+    }
 
-                    input.nextLine();
-                } catch(InputMismatchException e){
-                    System.err.println("Please, choose a valid option!");
-                    input.nextLine();
-                    System.out.println();
-                }
-        }while(!isValid);
+    private int comboButtonAction(){
+        int param = 0;
 
-            switch (entry) {
-                case 1:
-                    InsertProduct();
-                    break;
-                case 2:
-                    ShowProduct();
-                    break;
-                case 3:
-                    UpdateProduct();
-                    break;
-                case 4:
-                    DeleteProduct();
-                    break;
-                case 5:
-                    System.out.println("Exiting!");
-                    break;
-            }
-        } while(entry != 5);
+        if (jComboButton.getSelectedIndex() == 0){
+            JOptionPane.showMessageDialog(null, "Please, select an option!", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (jComboButton.getSelectedIndex() == 1){
+            param = 1;
+        } else{
+            param = 2;
+        }
+        return param;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+
+        if (event.getSource() == jInsertProduct){
+            insertProduct(comboButtonAction());
+        } else if (event.getSource() == jShowProduct){
+            showProduct(comboButtonAction());
+        }else if (event.getSource() == jUpdateProduct){
+            updateProduct(comboButtonAction());
+        } else if (event.getSource() == jDeleteProduct){
+            deleteProduct(comboButtonAction());
+        } else if (event.getSource() == jLogOutButton){
+            Login login = new Login();
+            login.setVisible(true);
+            this.dispose();
+        }
     }
 }
-
-

@@ -1,86 +1,79 @@
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.ArrayList;
-public class Login {
-    private boolean isLoggedIn;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-    // The way to access the employeeList that is inside another class
-    public ArrayList<Employee> employeeList;
+public class Login extends JFrame implements ActionListener {
+    private final JButton jLoginButton;
+    private final JButton jRegisterButton;
 
-    Scanner input = new Scanner(System.in);
+    public Login(){
+
+        // Creating main screen
+        setTitle("Login");
+        setSize(500, 150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setLayout(null);
+
+        // Adding labels for text fields
+        JLabel jUserLabel = new JLabel("User:");
+        //jUserLabel.setBounds(10, 10, 90,50);
+        jUserLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+
+        JLabel jPasswordLabel = new JLabel("Password:");
+        //jUserLabel.setBounds(10, 20, 90,50);
+        jPasswordLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
 
-    public Login() {
+        // Adding text fields
+        JTextField jUserTextField = new JTextField();
+        //jUserTextField.setBounds(40, 10, 90,50);
+
+        JTextField jPasswordTextField = new JTextField();
+        //jUserTextField.setBounds(40, 20, 90,50);
+
+
+        //Adding buttons
+        jLoginButton = new JButton("Login");
+        jLoginButton.setFont(new Font("Arial", Font.BOLD, 14));
+        //jLoginButton.setBounds(100, 200, 250, 70);
+
+        jRegisterButton = new JButton("Register");
+        jRegisterButton.setFont(new Font("Arial", Font.BOLD, 14));
+        //jRegisterButton.setBounds(200, 200, 250, 70);
+
+
+        // Adding listener to buttons
+        jLoginButton.addActionListener(this);
+        jRegisterButton.addActionListener(this);
+
+
+        // Applying a 3x3 grid layout to the components
+        setLayout(new GridLayout(3,3));
+
+
+        //Adding fields to screen
+        add(jUserLabel);
+        add(jUserTextField);
+        add(jPasswordLabel);
+        add(jPasswordTextField);
+        add(jLoginButton);
+        add(jRegisterButton);
+
+        // Centralizing the information and making the screen visible, respectively
+        setLocationRelativeTo(null);
     }
-    public Login(ArrayList<Employee> employeeList) {
-        this.employeeList = employeeList;
-    }
-    public Login(boolean isLoggedIn){
-        this.isLoggedIn = isLoggedIn;
-    }
 
-    public boolean getIsLoggedIn() {
-        return isLoggedIn;
-    }
-
-    public void setIsLoggedIn(boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-    }
-
-    public void UserLogin(){
-        int id = 0;
-        String password = "";
-        boolean isValid = false;
-        boolean isNull = false;
-
-        System.out.println("Insert your credentials!");
-        System.out.println();
-        do {
-            try {
-                System.out.print("ID: ");
-                id = input.nextInt();
-                isValid = true;
-                input.nextLine();
-            } catch (InputMismatchException e) {
-                System.err.println("The ID must be numeric!");
-            }
-        } while (!isValid);
-
-        do {
-            try {
-                System.out.print("Password: ");
-                password = input.nextLine();
-                if (password.isEmpty()) {
-                    throw new IllegalArgumentException("Password cannot be empty!");
-                }
-                isNull = true;
-            } catch(IllegalArgumentException e){
-                System.err.println(e.getMessage());
-                System.out.println();
-            }
-        } while(!isNull);
-        if (!employeeList.isEmpty()) {
-            for (Employee employee : employeeList) {
-
-                if (id == employee.getIdEmployee() && password.equals(employee.getPassword()) && getIsLoggedIn() == false) {
-                    // Libera acesso a Product Stock
-                    System.out.println("Login Successful!");
-                    setIsLoggedIn(true);
-                } else if (getIsLoggedIn() == true) {
-                    System.out.println("You are already logged in!");
-                    break;
-                } else {
-                    System.out.println("You don't have an active account!");
-                    break;
-                }
-            }
-        }else {
-            System.out.println("You don't have an active account!");
-            System.out.println();
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == jLoginButton){
+            // Make bank validation logic
+            ProductStock productStock = new ProductStock();
+            productStock.setVisible(true);
+            dispose();
+        } else if(event.getSource() == jRegisterButton){
+            EmployeeRegister employeeRegister = new EmployeeRegister();
+            dispose();
         }
-
-    }
-    public void UserValidation(){
-
     }
 }
