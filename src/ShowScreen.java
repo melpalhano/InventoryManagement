@@ -2,7 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import resources.DatabaseConnection;
+
 import java.sql.Connection;
 import java.util.Arrays;
 
@@ -67,7 +69,6 @@ public class ShowScreen extends JFrame implements ActionListener {
         //nameField.setPreferredSize(new Dimension(300, 90));
         idField.setColumns(20);
         idFieldContainer.add(idField);
-
 
 
         // Creating container to use inside the GridLayout
@@ -147,7 +148,7 @@ public class ShowScreen extends JFrame implements ActionListener {
         gridPanel.add(quantityFieldContainer);
 
         // Logic to set show Physical or Virtual specific fields
-        if (param == 1){
+        if (param == 1) {
             // Creating container to use inside the GridLayout
             JPanel locationLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
             // Using empty borders to have padding and centralize the buttons
@@ -172,7 +173,7 @@ public class ShowScreen extends JFrame implements ActionListener {
 
             gridPanel.add(locationLabelContainer);
             gridPanel.add(locationFieldContainer);
-        } else if (param == 2){
+        } else if (param == 2) {
             // Creating container to use inside the GridLayout
             JPanel methodLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
             // Using empty borders to have padding and centralize the buttons
@@ -180,7 +181,6 @@ public class ShowScreen extends JFrame implements ActionListener {
             methodLabelContainer.setBorder(BorderFactory.createEmptyBorder(50, 15, 0, 0));
             JLabel methodLabel = new JLabel("Shipping Method:");
             methodLabelContainer.add(methodLabel);
-
 
             // Creating container to use inside the GridLayout
             JPanel methodFieldContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -250,20 +250,20 @@ public class ShowScreen extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
 
-        if (event.getSource() == jBackButton){
+        if (event.getSource() == jBackButton) {
 //            ProductStock productStock = new ProductStock();
 //            productStock.setVisible(true);
 //            productStock.setComboButtonState(getProductParam());
             this.dispose();
-        } else if (event.getSource() == jShowAllButton){
+        } else if (event.getSource() == jShowAllButton) {
             try {
                 // TO-DO:
                 // Select all the values from the database
                 // Insert the values in an array
                 // Test if the values are from physical ou virtual products
                 // Enhance the exception treatment process
-                DatabaseConnection db=new DatabaseConnection();
-                Connection connection=db.connect_to_db("inventory","postgres","admin");
+                DatabaseConnection db = new DatabaseConnection();
+                Connection connection = db.connect_to_db("inventory", "postgres", "admin");
 
                 productsdb = db.readProduct(connection, "product_id", "product_name", "product_price", "product_quantity", "product_location", "product_type");
 
@@ -290,10 +290,10 @@ public class ShowScreen extends JFrame implements ActionListener {
 
                 currentIndex = 0;
                 setProductFields(currentIndex);
-            } catch(IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else if (event.getSource() == jPreviousButton){
+        } else if (event.getSource() == jPreviousButton) {
             // TO-DO
             // Add try catch block for values < 0
             // Test if the array is not empty
@@ -308,10 +308,10 @@ public class ShowScreen extends JFrame implements ActionListener {
                 } else {
                     throw new Exception("Show the products first!");
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else if (event.getSource() == jNextButton){
+        } else if (event.getSource() == jNextButton) {
             // TO-DO
             // Add try catch block for values greater than the array size
             // Test if the array is not empty
@@ -324,7 +324,7 @@ public class ShowScreen extends JFrame implements ActionListener {
                         } else {
                             throw new Exception("This is the last item!");
                         }
-                    } else if (getProductParam() == 2){
+                    } else if (getProductParam() == 2) {
                         if (currentIndex < trimmedProductsVirtual.length - 1) {
                             currentIndex++;
                             setProductFields(currentIndex);
@@ -335,7 +335,7 @@ public class ShowScreen extends JFrame implements ActionListener {
                 } else {
                     throw new Exception("Show the products first!");
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }

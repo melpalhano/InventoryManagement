@@ -14,14 +14,6 @@ public class Product {
         this.quantityProduct = quantityProduct;
     }
 
-    /*
-    public void getProduct(){
-        System.out.println("Product ID: "+this.getIdProduct());
-        System.out.println("Product's name: "+this.getNameProduct());
-        System.out.println("Price: "+this.getPriceProduct());
-        System.out.println("Quantity: "+this.getQuantityProduct());
-    }
-    */
     public int getIdProduct() {
         return idProduct;
     }
@@ -54,7 +46,7 @@ public class Product {
         this.quantityProduct = quantityProduct;
     }
 
-    public void AllProductHandling(){
+    public void AllProductHandling() {
         System.out.println();
     }
 

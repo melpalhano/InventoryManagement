@@ -1,9 +1,9 @@
 import resources.DatabaseConnection;
+import java.sql.Connection;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
 
 public class InsertScreen extends JFrame implements ActionListener {
     private int productParam;
@@ -107,7 +107,7 @@ public class InsertScreen extends JFrame implements ActionListener {
         gridPanel.add(quantityFieldContainer);
 
         // Logic to set show Physical or Virtual specific fields
-        if (param == 1){
+        if (param == 1) {
             // Creating container to use inside the GridLayout
             JPanel locationLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
             // Using empty borders to have padding and centralize the buttons
@@ -131,7 +131,7 @@ public class InsertScreen extends JFrame implements ActionListener {
 
             gridPanel.add(locationLabelContainer);
             gridPanel.add(locationFieldContainer);
-        } else if (param == 2){
+        } else if (param == 2) {
             // Creating container to use inside the GridLayout
             JPanel methodLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
             // Using empty borders to have padding and centralize the buttons
@@ -156,7 +156,6 @@ public class InsertScreen extends JFrame implements ActionListener {
             gridPanel.add(methodLabelContainer);
             gridPanel.add(methodFieldContainer);
         }
-
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
@@ -192,73 +191,73 @@ public class InsertScreen extends JFrame implements ActionListener {
         VirtualProduct virtualProduct = new VirtualProduct();
         Product product = new Product();
 
-        if (event.getSource() == jBackButton){
+        if (event.getSource() == jBackButton) {
 //            ProductStock productStock = new ProductStock();
 //            productStock.setComboButtonState(getProductParam());
 //            productStock.setIsLoggedIn(true);
 //            productStock.setVisible(true);
             this.dispose();
-        } else if (event.getSource() == jInsertButton){
+        } else if (event.getSource() == jInsertButton) {
             try {
                 //To avoid receiving null value
                 physicalProduct.setStoreLocation("");
-                    if (nameField.getText().isEmpty() && priceField.getText().isEmpty() && quantityField.getText().isEmpty()
-                     && (locationField.getText().isEmpty() || methodField.getText().isEmpty())) {
-                        throw new IllegalArgumentException("Please, fulfill the fields!");
-                    } else if (nameField.getText().isEmpty()) {
-                        throw new IllegalArgumentException("Please enter a product name.");
-                    } else if (priceField.getText().isEmpty() || (!priceField.getText().matches("-?\\d+(\\.\\d+)?"))) {
-                        throw new IllegalArgumentException("Please enter a valid product price.");
-                    } else if (Double.parseDouble(priceField.getText()) <= 0) {
-                        throw new IllegalArgumentException("Invalid product price. Please enter a positive value.");
-                    }else if (quantityField.getText().isEmpty() || (!quantityField.getText().matches("-?\\d+(\\.\\d+)?"))) {
-                        throw new IllegalArgumentException("Please enter a valid product quantity.");
-                    }else if (Integer.parseInt(quantityField.getText()) <= 0) {
-                        throw new IllegalArgumentException("Invalid product quantity. Please enter a positive value.");
-                    }
-                    if (getProductParam() == 1) {
-                        if (locationField.getText().isEmpty()) {
-                            throw new IllegalArgumentException("Please enter a store location.");
-                        }
-                        physicalProduct.setStoreLocation(locationField.getText());
-                    } else if (getProductParam() == 2) {
-                        if (methodField.getText().isEmpty()) {
-                            throw new IllegalArgumentException("Please enter a store location.");
-                        }
-                        virtualProduct.setShippingMethod(methodField.getText());
-                    }
-
-                    product.setNameProduct(nameField.getText());
-                    product.setPriceProduct(Double.parseDouble(priceField.getText()));
-                    product.setQuantityProduct(Integer.parseInt(quantityField.getText()));
-
-                    String productLocation = (!physicalProduct.getStoreLocation().isBlank()) ? physicalProduct.getStoreLocation() : virtualProduct.getShippingMethod();
-                    String productType = (!physicalProduct.getStoreLocation().isBlank()) ? "Physical Product" : "Virtual Product";
-
-                    DatabaseConnection db=new DatabaseConnection();
-                    Connection connection=db.connect_to_db("inventory","postgres","admin");
-                    db.insertProduct(connection, product.getNameProduct(),product.getPriceProduct(), product.getQuantityProduct(), productLocation, productType);
-
-                    System.out.println("Name: " + product.getNameProduct());
-                    System.out.println("Price: " + product.getPriceProduct());
-                    System.out.println("Quantity: " + product.getQuantityProduct());
-                    System.out.println("Location" + productLocation);
-                    System.out.println("Tipo de Produto " + productType);
-
-                    // Reset the field values
-                    nameField.setText("");
-                    priceField.setText("");
-                    quantityField.setText("");
-                    if (getProductParam() == 1){
-                        locationField.setText("");
-                    } else if (getProductParam() == 2){
-                        methodField.setText("");
-                    }
-
-                    JOptionPane.showMessageDialog(null, "Product Inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                } catch(IllegalArgumentException e){
-                    JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                if (nameField.getText().isEmpty() && priceField.getText().isEmpty() && quantityField.getText().isEmpty()
+                        && (locationField.getText().isEmpty() || methodField.getText().isEmpty())) {
+                    throw new IllegalArgumentException("Please, fulfill the fields!");
+                } else if (nameField.getText().isEmpty()) {
+                    throw new IllegalArgumentException("Please enter a product name.");
+                } else if (priceField.getText().isEmpty() || (!priceField.getText().matches("-?\\d+(\\.\\d+)?"))) {
+                    throw new IllegalArgumentException("Please enter a valid product price.");
+                } else if (Double.parseDouble(priceField.getText()) <= 0) {
+                    throw new IllegalArgumentException("Invalid product price. Please enter a positive value.");
+                } else if (quantityField.getText().isEmpty() || (!quantityField.getText().matches("-?\\d+(\\.\\d+)?"))) {
+                    throw new IllegalArgumentException("Please enter a valid product quantity.");
+                } else if (Integer.parseInt(quantityField.getText()) <= 0) {
+                    throw new IllegalArgumentException("Invalid product quantity. Please enter a positive value.");
                 }
+                if (getProductParam() == 1) {
+                    if (locationField.getText().isEmpty()) {
+                        throw new IllegalArgumentException("Please enter a store location.");
+                    }
+                    physicalProduct.setStoreLocation(locationField.getText());
+                } else if (getProductParam() == 2) {
+                    if (methodField.getText().isEmpty()) {
+                        throw new IllegalArgumentException("Please enter a store location.");
+                    }
+                    virtualProduct.setShippingMethod(methodField.getText());
+                }
+
+                product.setNameProduct(nameField.getText());
+                product.setPriceProduct(Double.parseDouble(priceField.getText()));
+                product.setQuantityProduct(Integer.parseInt(quantityField.getText()));
+
+                String productLocation = (!physicalProduct.getStoreLocation().isBlank()) ? physicalProduct.getStoreLocation() : virtualProduct.getShippingMethod();
+                String productType = (!physicalProduct.getStoreLocation().isBlank()) ? "Physical Product" : "Virtual Product";
+
+                DatabaseConnection db = new DatabaseConnection();
+                Connection connection = db.connect_to_db("inventory", "postgres", "admin");
+                db.insertProduct(connection, product.getNameProduct(), product.getPriceProduct(), product.getQuantityProduct(), productLocation, productType);
+
+                System.out.println("Name: " + product.getNameProduct());
+                System.out.println("Price: " + product.getPriceProduct());
+                System.out.println("Quantity: " + product.getQuantityProduct());
+                System.out.println("Location" + productLocation);
+                System.out.println("Tipo de Produto " + productType);
+
+                // Reset the field values
+                nameField.setText("");
+                priceField.setText("");
+                quantityField.setText("");
+                if (getProductParam() == 1) {
+                    locationField.setText("");
+                } else if (getProductParam() == 2) {
+                    methodField.setText("");
+                }
+
+                JOptionPane.showMessageDialog(null, "Product Inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
 }

@@ -2,12 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import resources.DatabaseConnection;
+import java.sql.Connection;
 
 public class Login extends JFrame implements ActionListener {
     private final JButton jLoginButton;
     private final JButton jRegisterButton;
+    private final JTextField jUserTextField;
+    private final JTextField jPasswordTextField;
 
-    public Login(){
+    public Login() {
 
         // Creating main screen
         setTitle("Login");
@@ -24,14 +28,13 @@ public class Login extends JFrame implements ActionListener {
         //jUserLabel.setBounds(10, 20, 90,50);
         jPasswordLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
-
         // Adding text fields
-        JTextField jUserTextField = new JTextField();
+
+        jUserTextField = new JTextField();
         //jUserTextField.setBounds(40, 10, 90,50);
 
-        JTextField jPasswordTextField = new JTextField();
+        jPasswordTextField = new JTextField();
         //jUserTextField.setBounds(40, 20, 90,50);
-
 
         //Adding buttons
         jLoginButton = new JButton("Login");
@@ -47,10 +50,8 @@ public class Login extends JFrame implements ActionListener {
         jLoginButton.addActionListener(this);
         jRegisterButton.addActionListener(this);
 
-
         // Applying a 3x3 grid layout to the components
-        setLayout(new GridLayout(3,3));
-
+        setLayout(new GridLayout(3, 3));
 
         //Adding fields to screen
         add(jUserLabel);
@@ -66,12 +67,30 @@ public class Login extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() == jLoginButton){
-            // Make bank validation logic
-            ProductStock productStock = new ProductStock();
-            productStock.setVisible(true);
-            dispose();
-        } else if(event.getSource() == jRegisterButton){
+        DatabaseConnection db = new DatabaseConnection();
+        Connection connection = db.connect_to_db("inventory", "postgres", "admin");
+        if (event.getSource() == jLoginButton) {
+
+            try {
+
+                if(jUserTextField.getText().isEmpty() && jPasswordTextField.getText().isEmpty()){
+                    throw new IllegalArgumentException("Fields cannot be empty!");
+                } else if(jUserTextField.getText().isEmpty()){
+                    throw new IllegalArgumentException("User field cannot be empty");
+                } else if(jPasswordTextField.getText().isEmpty()){
+                    throw new IllegalArgumentException("Password field cannot be empty");
+                }
+
+                db.loginValidation(connection, jUserTextField.getText(), jPasswordTextField.getText());
+                JOptionPane.showMessageDialog(null, "Login Succesfull", "Error", JOptionPane.INFORMATION_MESSAGE);
+                ProductStock productStock = new ProductStock();
+                productStock.setVisible(true);
+                dispose();
+            } catch(IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } else if (event.getSource() == jRegisterButton) {
             EmployeeRegister employeeRegister = new EmployeeRegister();
             dispose();
         }

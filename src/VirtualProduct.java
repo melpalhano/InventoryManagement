@@ -1,8 +1,10 @@
-public class VirtualProduct extends Product{
+public class VirtualProduct extends Product {
     private String shippingMethod;
 
-    public VirtualProduct(){}
-    public VirtualProduct(int idProduct, String nameProduct, double priceProduct, int quantityProduct, String storeLocation, String shippingMethod){
+    public VirtualProduct() {
+    }
+
+    public VirtualProduct(int idProduct, String nameProduct, double priceProduct, int quantityProduct, String storeLocation, String shippingMethod) {
         super(idProduct, nameProduct, priceProduct, quantityProduct);
         this.shippingMethod = shippingMethod;
     }

@@ -3,6 +3,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import resources.DatabaseConnection;
+
+import java.sql.Connection;
+
 public class UpdateScreen extends JFrame implements ActionListener {
     private int productParam;
     private final JTextField idField;
@@ -16,7 +20,7 @@ public class UpdateScreen extends JFrame implements ActionListener {
     private final JButton jPreviousButton;
     private final JButton jNextButton;
     private final JButton jUpdateButton;
-    private String[][] products;
+    private String[][] productsdb;
     private int currentIndex;
 
     public UpdateScreen(int param) {
@@ -39,7 +43,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         // Creating GridPanel and adding Labels and Texfields
         JPanel gridPanel = new JPanel(new GridLayout(6, 2));
 
-
         // Creating container to use inside the GridLayout
         JPanel idLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Using empty borders to have padding and centralize the buttons
@@ -57,8 +60,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         //nameField.setPreferredSize(new Dimension(300, 90));
         idField.setColumns(20);
         idFieldContainer.add(idField);
-
-
 
         // Creating container to use inside the GridLayout
         JPanel nameLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -78,7 +79,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         nameField.setColumns(20);
         nameFieldContainer.add(nameField);
 
-
         // Creating container to use inside the GridLayout
         JPanel priceLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Using empty borders to have padding and centralize the buttons
@@ -86,7 +86,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         priceLabelContainer.setBorder(BorderFactory.createEmptyBorder(50, 15, 0, 0));
         JLabel priceLabel = new JLabel("Product Price:");
         priceLabelContainer.add(priceLabel);
-
 
         // Creating container to use inside the GridLayout
         JPanel priceFieldContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -99,7 +98,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         priceField.setColumns(20);
         priceFieldContainer.add(priceField);
 
-
         // Creating container to use inside the GridLayout
         JPanel quantityLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Using empty borders to have padding and centralize the buttons
@@ -107,7 +105,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         quantityLabelContainer.setBorder(BorderFactory.createEmptyBorder(50, 15, 0, 0));
         JLabel quantityLabel = new JLabel("Product Quantity:");
         quantityLabelContainer.add(quantityLabel);
-
 
         // Creating container to use inside the GridLayout
         JPanel quantityFieldContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -136,7 +133,7 @@ public class UpdateScreen extends JFrame implements ActionListener {
         gridPanel.add(quantityFieldContainer);
 
         // Logic to set show Physical or Virtual specific fields
-        if (param == 1){
+        if (param == 1) {
             // Creating container to use inside the GridLayout
             JPanel locationLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
             // Using empty borders to have padding and centralize the buttons
@@ -144,7 +141,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
             locationLabelContainer.setBorder(BorderFactory.createEmptyBorder(50, 15, 0, 0));
             JLabel locationLabel = new JLabel("Store Location:");
             locationLabelContainer.add(locationLabel);
-
 
             // Creating container to use inside the GridLayout
             JPanel locationFieldContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -161,7 +157,7 @@ public class UpdateScreen extends JFrame implements ActionListener {
 
             gridPanel.add(locationLabelContainer);
             gridPanel.add(locationFieldContainer);
-        } else if (param == 2){
+        } else if (param == 2) {
             // Creating container to use inside the GridLayout
             JPanel methodLabelContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
             // Using empty borders to have padding and centralize the buttons
@@ -169,7 +165,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
             methodLabelContainer.setBorder(BorderFactory.createEmptyBorder(50, 15, 0, 0));
             JLabel methodLabel = new JLabel("Shipping Method:");
             methodLabelContainer.add(methodLabel);
-
 
             // Creating container to use inside the GridLayout
             JPanel methodFieldContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -200,7 +195,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         buttonPanel.add(jBackButton);
         buttonPanel.add(jSearchButton);
 
-
         // Creating Previous and Next panel button
         JPanel buttonPNPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Creating buttons
@@ -211,7 +205,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         // Adding buttons to panel
         buttonPNPanel.add(jPreviousButton);
         buttonPNPanel.add(jNextButton);
-
 
         // Creating Update panel button
         JPanel buttonUpdatePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -230,7 +223,6 @@ public class UpdateScreen extends JFrame implements ActionListener {
         // Adding buttons to panel
         buttonUpdatePanel.add(jUpdateButton);
         buttonUpdatePanel.add(jInvisibleButton);
-
 
         // Adding listeners to buttons
         jBackButton.addActionListener(this);
@@ -257,71 +249,67 @@ public class UpdateScreen extends JFrame implements ActionListener {
         return productParam;
     }
 
-
     @Override
     public void actionPerformed(ActionEvent event) {
+        DatabaseConnection db = new DatabaseConnection();
+        Connection connection = db.connect_to_db("inventory", "postgres", "admin");
         PhysicalProduct physicalProduct = new PhysicalProduct();
         VirtualProduct virtualProduct = new VirtualProduct();
         Product product = new Product();
 
-        if (event.getSource() == jBackButton){
-//            ProductStock productStock = new ProductStock();
-//            productStock.setComboButtonState(getProductParam());
-//            productStock.setVisible(true);
+        if (event.getSource() == jBackButton) {
             this.dispose();
-        } else if (event.getSource() == jSearchButton){
+        } else if (event.getSource() == jSearchButton) {
             try {
-                // TO-DO:
-                // Select the value by id from the database
-                // Insert the values in an array
-                // Test if the values are from physical ou virtual products
-                // Enhance the exception treatment process
-
-                if (idField.getText().isEmpty()){
+                if (idField.getText().isEmpty()) {
                     throw new IllegalArgumentException("ID Field cannot be empty!");
                 }
 
-                // Set ID field to bet not editable and turn other back to editable
-                idField.setEditable(false);
-                nameField.setEditable(true);
-                priceField.setEditable(true);
-                quantityField.setEditable(true);
-
-                if (getProductParam() == 1){
-                    locationField.setEditable(true);
-                } else if (getProductParam() == 2){
-                    methodField.setEditable(true);
+                if (!idField.getText().matches("-?\\d+(\\.\\d+)?")) {
+                    throw new IllegalArgumentException("ID Field must be a number!");
                 }
 
                 // Gets the ID value from the ID Field
                 product.setIdProduct(Integer.parseInt(idField.getText()));
+                productsdb = db.searchProductID(connection, "product_id", "product_name", "product_price", "product_quantity", "product_location", "product_type", product.getIdProduct());
 
-                // TO-DO
-                // Logic that gets the values associated to the ID from the database
+                if (productsdb.length <= 0) {
+                    throw new Exception("Please, insert a valid ID!");
+                }
+                // Set ID field back to non-editable
+                idField.setEditable(false);
 
-//                products = new String[][]{{"1","Mel Test", "10000", "1", "Gramadil","type"},
-//                        {"2","Cesar Test", "100", "1", "Sluizil"}};
-//
-//                currentIndex = 0;
-//                setProductFields(currentIndex);
-            } catch(IllegalArgumentException e){
+                // Set fields back to editable
+                nameField.setEditable(true);
+                priceField.setEditable(true);
+                quantityField.setEditable(true);
+                if (getProductParam() == 1) {
+                    locationField.setEditable(true);
+                } else if (getProductParam() == 2) {
+                    methodField.setEditable(true);
+                }
+                currentIndex = 0;
+                setProductFields(currentIndex);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else if (event.getSource() == jPreviousButton){
+        } else if (event.getSource() == jPreviousButton) {
             // Not being used
             if (currentIndex > 0) {
                 currentIndex--;
                 setProductFields(currentIndex);
             }
-        } else if (event.getSource() == jNextButton){
+        } else if (event.getSource() == jNextButton) {
             // Not being used
-            if (currentIndex < products.length - 1) {
+            if (currentIndex < productsdb.length - 1) {
                 currentIndex++;
                 setProductFields(currentIndex);
             }
-        } else if (event.getSource() == jUpdateButton){
+        } else if (event.getSource() == jUpdateButton) {
             try {
-
+                physicalProduct.setStoreLocation("");
                 if (nameField.getText().isEmpty() && priceField.getText().isEmpty() && quantityField.getText().isEmpty()
                         && (locationField.getText().isEmpty() || methodField.getText().isEmpty())) {
                     throw new IllegalArgumentException("Please, fulfill the fields!");
@@ -331,9 +319,9 @@ public class UpdateScreen extends JFrame implements ActionListener {
                     throw new IllegalArgumentException("Please enter a valid product price.");
                 } else if (Double.parseDouble(priceField.getText()) <= 0) {
                     throw new IllegalArgumentException("Invalid product price. Please enter a positive value.");
-                }else if (quantityField.getText().isEmpty() || (!quantityField.getText().matches("-?\\d+(\\.\\d+)?"))) {
+                } else if (quantityField.getText().isEmpty() || (!quantityField.getText().matches("-?\\d+(\\.\\d+)?"))) {
                     throw new IllegalArgumentException("Please enter a valid product quantity.");
-                }else if (Integer.parseInt(quantityField.getText()) <= 0) {
+                } else if (Integer.parseInt(quantityField.getText()) <= 0) {
                     throw new IllegalArgumentException("Invalid product quantity. Please enter a positive value.");
                 }
                 if (getProductParam() == 1) {
@@ -353,41 +341,42 @@ public class UpdateScreen extends JFrame implements ActionListener {
                 product.setQuantityProduct(Integer.parseInt(quantityField.getText()));
 
                 // Banks logic
-                System.out.println("Name: " + product.getNameProduct());
-                System.out.println("Price: " + product.getPriceProduct());
-                System.out.println("Quantity: " + product.getQuantityProduct());
-                System.out.println("Location or Shipping: " + ((!physicalProduct.getStoreLocation().isBlank()) ? physicalProduct.getStoreLocation() : virtualProduct.getShippingMethod()));
+                String productLocation = (!physicalProduct.getStoreLocation().isBlank()) ? physicalProduct.getStoreLocation() : virtualProduct.getShippingMethod();
+                //String productType = (!physicalProduct.getStoreLocation().isBlank()) ? "Physical Product" : "Virtual Product";
 
+                db.productUpdate(connection, "product_name", nameField.getText(), Integer.parseInt(idField.getText()));
+                db.productUpdate(connection, "product_price", priceField.getText(), Integer.parseInt(idField.getText()));
+                db.productUpdate(connection, "product_quantity", quantityField.getText(), Integer.parseInt(idField.getText()));
+                db.productUpdate(connection, "product_location", productLocation, Integer.parseInt(idField.getText()));
 
                 // Reset the field values
                 nameField.setText("");
                 priceField.setText("");
                 quantityField.setText("");
-                if (getProductParam() == 1){
+                if (getProductParam() == 1) {
                     locationField.setText("");
-                } else if (getProductParam() == 2){
+                } else if (getProductParam() == 2) {
                     methodField.setText("");
                 }
 
                 JOptionPane.showMessageDialog(null, "Product Inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } catch(IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-
     // Setting the textField values
     private void setProductFields(int index) {
-        idField.setText(products[index][0]);
-        nameField.setText(products[index][1]);
-        priceField.setText(products[index][2]);
-        quantityField.setText(products[index][3]);
+        idField.setText(productsdb[index][0]);
+        nameField.setText(productsdb[index][1]);
+        priceField.setText(productsdb[index][2]);
+        quantityField.setText(productsdb[index][3]);
 
-        if (getProductParam() == 1){
-            locationField.setText(products[index][4]);
-        } else if (getProductParam() == 2){
-            methodField.setText(products[index][4]);
+        if (getProductParam() == 1) {
+            locationField.setText(productsdb[index][4]);
+        } else if (getProductParam() == 2) {
+            methodField.setText(productsdb[index][4]);
         }
     }
 }

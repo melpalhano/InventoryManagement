@@ -21,13 +21,14 @@ public class DeleteScreen extends JFrame implements ActionListener {
     private final JButton jPreviousButton;
     private final JButton jNextButton;
     private final JButton jDeleteButton;
-    private String[][] products;
+
+    private String[][] productsdb;
     private int currentIndex;
 
     public DeleteScreen(int param) {
         this.productParam = param;
         // Creating main screen
-        setTitle("Update Product Information");
+        setTitle("Delete Product Information");
         setSize(850, 675);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -37,7 +38,7 @@ public class DeleteScreen extends JFrame implements ActionListener {
 
         // Creating and setting title properties
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel titleLabel = new JLabel("Update a Product");
+        JLabel titleLabel = new JLabel("Delete a Product");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titlePanel.add(titleLabel);
 
@@ -272,69 +273,69 @@ public class DeleteScreen extends JFrame implements ActionListener {
         Product product = new Product();
 
         if (event.getSource() == jBackButton){
-//            ProductStock productStock = new ProductStock();
-//            productStock.setComboButtonState(getProductParam());
-//            productStock.setVisible(true);
             this.dispose();
         } else if (event.getSource() == jSearchButton){
             try {
-                // TO-DO:
-                // Select the value by id from the database
-                // Insert the values in an array
-                // Test if the values are from physical ou virtual products
-                // Enhance the exception treatment process
 
                 if (idField.getText().isEmpty()){
                     throw new IllegalArgumentException("ID Field cannot be empty!");
                 }
 
+              if(!idField.getText().matches("-?\\d+(\\.\\d+)?")){
+                  throw new IllegalArgumentException("ID Field must be a number!");
+              }
+
                 // Gets the ID value from the ID Field
                 product.setIdProduct(Integer.parseInt(idField.getText()));
-                System.out.println(product.getIdProduct());
-                db.searchProductID(connection, product.getIdProduct());
+                productsdb = db.searchProductID(connection,"product_id", "product_name", "product_price", "product_quantity", "product_location", "product_type", product.getIdProduct());
 
+                if (productsdb.length <= 0){
+                    throw new Exception("Please, insert a valid ID!");
+                }
                 // Set ID field back to non-editable
                 idField.setEditable(false);
 
 
-                // TO-DO
-                // Logic that gets the values associated to the ID from the database
-                // and puts them inside an array to show in the fields
-
-//                products = new String[][]{{"1","Mel Test", "10000", "1", "Gramadil","type"},
-//                        {"2","Cesar Test", "100", "1", "Sluizil"}};
-//
-//                currentIndex = 0;
-//                setProductFields(currentIndex);
+                currentIndex = 0;
+                setProductFields(currentIndex);
             } catch(IllegalArgumentException e){
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch(Exception e){
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (event.getSource() == jPreviousButton){
-            // TO-DO
-            // Add try catch block for values < 0
-            // Test if the array is not empty
             if (currentIndex > 0) {
                 currentIndex--;
                 setProductFields(currentIndex);
             }
         } else if (event.getSource() == jNextButton){
-            // TO-DO
-            // Add try catch block for values greater than the array size
-            // Test if the array is not empty
-            if (currentIndex < products.length - 1) {
+
+            if (currentIndex < productsdb.length - 1) {
                 currentIndex++;
                 setProductFields(currentIndex);
             }
         } else if (event.getSource() == jDeleteButton){
             try {
-                // Logic to delete product from database
-                // IF works, is success
-                // else, thows error
-
-
-
                 //Delete in the database from the ID
-                db.deleteProduct(connection, Integer.parseInt(idField.getText()));
+                if (idField.getText().isEmpty()){
+                    throw new Exception("ID Field cannot be empty!");
+                }
+
+                if(!idField.getText().isEmpty()){
+                    productsdb = db.searchProductID(connection,"product_id", "product_name", "product_price", "product_quantity", "product_location", "product_type", product.getIdProduct());
+                    if (productsdb == null){
+                        throw new Exception("Enter a valid ID");
+                    }
+                    db.deleteProduct(connection, Integer.parseInt(idField.getText()));
+                }else{
+                    productsdb = db.searchProductID(connection,"product_id", "product_name", "product_price", "product_quantity", "product_location", "product_type", product.getIdProduct());
+                    if (productsdb == null){
+                        throw new Exception("Enter a valid ID");
+                    }
+                    db.deleteProduct(connection, product.getIdProduct());
+                }
+
+                // Successfull delete message
                 JOptionPane.showMessageDialog(null, "Product Deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
                 // Reset the field values
@@ -348,7 +349,7 @@ public class DeleteScreen extends JFrame implements ActionListener {
                     methodField.setText("");
                 }
 
-            } catch(IllegalArgumentException e){
+            } catch(Exception e){
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -356,15 +357,15 @@ public class DeleteScreen extends JFrame implements ActionListener {
 
     // Setting the textField values
     private void setProductFields(int index) {
-        idField.setText(products[index][0]);
-        nameField.setText(products[index][1]);
-        priceField.setText(products[index][2]);
-        quantityField.setText(products[index][3]);
+        idField.setText(productsdb[index][0]);
+        nameField.setText(productsdb[index][1]);
+        priceField.setText(productsdb[index][2]);
+        quantityField.setText(productsdb[index][3]);
 
         if (getProductParam() == 1){
-            locationField.setText(products[index][4]);
+            locationField.setText(productsdb[index][4]);
         } else if (getProductParam() == 2){
-            methodField.setText(products[index][4]);
+            methodField.setText(productsdb[index][4]);
         }
     }
 }
