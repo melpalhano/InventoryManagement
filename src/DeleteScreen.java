@@ -1,7 +1,12 @@
+import resources.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+
 
 public class DeleteScreen extends JFrame implements ActionListener {
     private int productParam;
@@ -23,7 +28,7 @@ public class DeleteScreen extends JFrame implements ActionListener {
         this.productParam = param;
         // Creating main screen
         setTitle("Update Product Information");
-        setSize(800, 675);
+        setSize(850, 675);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Creating BoxLayout panel
@@ -260,13 +265,16 @@ public class DeleteScreen extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
+        DatabaseConnection db=new DatabaseConnection();
+        Connection connection=db.connect_to_db("inventory","postgres","admin");
         PhysicalProduct physicalProduct = new PhysicalProduct();
         VirtualProduct virtualProduct = new VirtualProduct();
         Product product = new Product();
 
         if (event.getSource() == jBackButton){
-            ProductStock productStock = new ProductStock();
-            productStock.setVisible(true);
+//            ProductStock productStock = new ProductStock();
+//            productStock.setComboButtonState(getProductParam());
+//            productStock.setVisible(true);
             this.dispose();
         } else if (event.getSource() == jSearchButton){
             try {
@@ -280,12 +288,14 @@ public class DeleteScreen extends JFrame implements ActionListener {
                     throw new IllegalArgumentException("ID Field cannot be empty!");
                 }
 
+                // Gets the ID value from the ID Field
+                product.setIdProduct(Integer.parseInt(idField.getText()));
+                System.out.println(product.getIdProduct());
+                db.searchProductID(connection, product.getIdProduct());
+
                 // Set ID field back to non-editable
                 idField.setEditable(false);
 
-
-                // Gets the ID value from the ID Field
-                product.setIdProduct(Integer.parseInt(idField.getText()));
 
                 // TO-DO
                 // Logic that gets the values associated to the ID from the database
@@ -320,7 +330,14 @@ public class DeleteScreen extends JFrame implements ActionListener {
                 // Logic to delete product from database
                 // IF works, is success
                 // else, thows error
+
+
+
+                //Delete in the database from the ID
+                db.deleteProduct(connection, Integer.parseInt(idField.getText()));
                 JOptionPane.showMessageDialog(null, "Product Deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                // Reset the field values
                 idField.setText("");
                 nameField.setText("");
                 priceField.setText("");

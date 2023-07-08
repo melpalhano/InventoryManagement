@@ -1,6 +1,8 @@
 package resources;
-import java.sql.*;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseConnection {
     public Connection connect_to_db(String databaseName, String user, String password) {
@@ -78,6 +80,7 @@ public class DatabaseConnection {
                 data[rowIndex][3] = value4;
                 data[rowIndex][4] = value5;
                 data[rowIndex][5] = value6;
+
                 rowIndex++;
             }
 
@@ -88,6 +91,23 @@ public class DatabaseConnection {
             return null;
         }
     }
+
+
+    public void deleteProduct(Connection connection, int id) {
+        Statement statement;
+        try {
+            String query = String.format("delete from product where product_id = %s", id);
+            statement = connection.createStatement();
+            statement.executeUpdate(query);
+            System.out.println("Data Deleted");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+
+
+
 
 
 }

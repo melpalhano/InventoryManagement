@@ -23,7 +23,7 @@ public class UpdateScreen extends JFrame implements ActionListener {
         this.productParam = param;
         // Creating main screen
         setTitle("Update Product Information");
-        setSize(800, 675);
+        setSize(850, 675);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Creating BoxLayout panel
@@ -265,8 +265,9 @@ public class UpdateScreen extends JFrame implements ActionListener {
         Product product = new Product();
 
         if (event.getSource() == jBackButton){
-            ProductStock productStock = new ProductStock();
-            productStock.setVisible(true);
+//            ProductStock productStock = new ProductStock();
+//            productStock.setComboButtonState(getProductParam());
+//            productStock.setVisible(true);
             this.dispose();
         } else if (event.getSource() == jSearchButton){
             try {
@@ -357,6 +358,8 @@ public class UpdateScreen extends JFrame implements ActionListener {
                 System.out.println("Quantity: " + product.getQuantityProduct());
                 System.out.println("Location or Shipping: " + ((!physicalProduct.getStoreLocation().isBlank()) ? physicalProduct.getStoreLocation() : virtualProduct.getShippingMethod()));
 
+
+                // Reset the field values
                 nameField.setText("");
                 priceField.setText("");
                 quantityField.setText("");

@@ -1,9 +1,10 @@
+import resources.DatabaseConnection;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import resources.DatabaseConnection;
 import java.sql.Connection;
+
 public class InsertScreen extends JFrame implements ActionListener {
     private int productParam;
     private final JTextField nameField;
@@ -18,7 +19,7 @@ public class InsertScreen extends JFrame implements ActionListener {
         this.productParam = param;
         // Creating main screen
         setTitle("Insert Product Information");
-        setSize(800, 525);
+        setSize(880, 525);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Creating BoxLayout panel
@@ -192,12 +193,15 @@ public class InsertScreen extends JFrame implements ActionListener {
         Product product = new Product();
 
         if (event.getSource() == jBackButton){
-            ProductStock productStock = new ProductStock();
-            productStock.setVisible(true);
+//            ProductStock productStock = new ProductStock();
+//            productStock.setComboButtonState(getProductParam());
+//            productStock.setIsLoggedIn(true);
+//            productStock.setVisible(true);
             this.dispose();
         } else if (event.getSource() == jInsertButton){
             try {
-
+                //To avoid receiving null value
+                physicalProduct.setStoreLocation("");
                     if (nameField.getText().isEmpty() && priceField.getText().isEmpty() && quantityField.getText().isEmpty()
                      && (locationField.getText().isEmpty() || methodField.getText().isEmpty())) {
                         throw new IllegalArgumentException("Please, fulfill the fields!");
@@ -241,8 +245,8 @@ public class InsertScreen extends JFrame implements ActionListener {
                     System.out.println("Location" + productLocation);
                     System.out.println("Tipo de Produto " + productType);
 
-
-                nameField.setText("");
+                    // Reset the field values
+                    nameField.setText("");
                     priceField.setText("");
                     quantityField.setText("");
                     if (getProductParam() == 1){

@@ -10,10 +10,11 @@ public class ProductStock extends JFrame implements ActionListener, ProductContr
     private final JButton jDeleteProduct;
     private final JButton jLogOutButton;
     private final JComboBox<String> jComboButton;
+    private int comboButtonState;
     public ProductStock(){
         // Creating main screen
         setTitle("Product Management");
-        setSize(800, 500);
+        setSize(850, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create a panel to hold the components
@@ -108,6 +109,10 @@ public class ProductStock extends JFrame implements ActionListener, ProductContr
         // Creating an empty label to separate the two buttons
         JLabel invisibleSpace = new JLabel("");
 
+        if (getComboButtonState() != 0){
+            jComboButton.setSelectedIndex(getComboButtonState());
+        }
+
         // Adding back button to the main BorderLayout panel
         bottomPanel.add(jLogOutButton);
         // Adding the empty label
@@ -134,6 +139,15 @@ public class ProductStock extends JFrame implements ActionListener, ProductContr
         setLocationRelativeTo(null);
     }
 
+
+
+    public int getComboButtonState() {
+        return comboButtonState;
+    }
+
+    public void setComboButtonState(int comboButtonState) {
+        this.comboButtonState = comboButtonState;
+    }
     
 
     @Override
@@ -141,7 +155,6 @@ public class ProductStock extends JFrame implements ActionListener, ProductContr
         if (param != 0){
            InsertScreen insertScreen = new InsertScreen(param);
            insertScreen.setVisible(true);
-           dispose();
         }
     }
 
@@ -150,7 +163,6 @@ public class ProductStock extends JFrame implements ActionListener, ProductContr
         if (param != 0){
             ShowScreen showScreen = new ShowScreen(param);
             showScreen.setVisible(true);
-            dispose();
         }
     }
 
@@ -159,7 +171,6 @@ public class ProductStock extends JFrame implements ActionListener, ProductContr
         if (param != 0){
             UpdateScreen updateScreen = new UpdateScreen(param);
             updateScreen.setVisible(true);
-            dispose();
         }
     }
 
@@ -168,21 +179,20 @@ public class ProductStock extends JFrame implements ActionListener, ProductContr
         if (param != 0){
             DeleteScreen deleteScreen = new DeleteScreen(param);
             deleteScreen.setVisible(true);
-            dispose();
         }
     }
 
     private int comboButtonAction(){
-        int param = 0;
+            comboButtonState = 0;
 
         if (jComboButton.getSelectedIndex() == 0){
             JOptionPane.showMessageDialog(null, "Please, select an option!", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (jComboButton.getSelectedIndex() == 1){
-            param = 1;
+            comboButtonState = 1;
         } else{
-            param = 2;
+            comboButtonState = 2;
         }
-        return param;
+        return comboButtonState;
     }
 
     @Override

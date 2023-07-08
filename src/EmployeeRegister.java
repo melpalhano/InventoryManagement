@@ -91,12 +91,11 @@ public class EmployeeRegister extends JFrame implements ActionListener {
 
                 // Banks logic
                 System.out.println("User: " + employee.getUser());
-                System.out.println("Passwd: " + employee.getPassword());
+                System.out.println("Password: " + employee.getPassword());
 
                 DatabaseConnection db = new DatabaseConnection();
                 Connection connection=db.connect_to_db("inventory","postgres","admin");
                 db.insertEmployee(connection, employee.getUser(),employee.getPassword());
-
 
                 // Success message
                 JOptionPane.showMessageDialog(null, "User created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);

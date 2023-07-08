@@ -1,10 +1,10 @@
-import resources.DatabaseConnection;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import resources.DatabaseConnection;
 import java.sql.Connection;
+import java.util.Arrays;
 
 public class ShowScreen extends JFrame implements ActionListener {
     private int productParam;
@@ -18,9 +18,17 @@ public class ShowScreen extends JFrame implements ActionListener {
     private final JButton jShowAllButton;
     private final JButton jPreviousButton;
     private final JButton jNextButton;
+    private String[][] products = {};
 
     private String[][] productsdb;
+    private String[][] productsPhysical;
+    private String[][] productsVirtual;
+    // Trim the arrays to remove any unused elements
+    private String[][] trimmedProductsPhysical;
+    private String[][] trimmedProductsVirtual;
+
     private int currentIndex;
+
     public ShowScreen(int param) {
         this.productParam = param;
         // Creating main screen
@@ -243,8 +251,9 @@ public class ShowScreen extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
 
         if (event.getSource() == jBackButton){
-            ProductStock productStock = new ProductStock();
-            productStock.setVisible(true);
+//            ProductStock productStock = new ProductStock();
+//            productStock.setVisible(true);
+//            productStock.setComboButtonState(getProductParam());
             this.dispose();
         } else if (event.getSource() == jShowAllButton){
             try {
@@ -255,7 +264,29 @@ public class ShowScreen extends JFrame implements ActionListener {
                 // Enhance the exception treatment process
                 DatabaseConnection db=new DatabaseConnection();
                 Connection connection=db.connect_to_db("inventory","postgres","admin");
+
                 productsdb = db.readProduct(connection, "product_id", "product_name", "product_price", "product_quantity", "product_location", "product_type");
+
+
+                int physicalCount = 0; // Counter for physical products
+                int virtualCount = 0; // Counter for virtual products
+
+                String[][] productsPhysical = new String[productsdb.length][5]; // Array for physical products
+                String[][] productsVirtual = new String[productsdb.length][5]; // Array for virtual products
+
+                for (int i = 0; i < productsdb.length; i++) {
+                    if (productsdb[i][5].equals("Physical Product")) {
+                        productsPhysical[physicalCount] = new String[]{productsdb[i][0], productsdb[i][1], productsdb[i][2], productsdb[i][3], productsdb[i][4]};
+                        physicalCount++;
+                    } else {
+                        productsVirtual[virtualCount] = new String[]{productsdb[i][0], productsdb[i][1], productsdb[i][2], productsdb[i][3], productsdb[i][4]};
+                        virtualCount++;
+                    }
+                }
+
+                // Trim the arrays to remove any unused elements
+                trimmedProductsPhysical = Arrays.copyOf(productsPhysical, physicalCount);
+                trimmedProductsVirtual = Arrays.copyOf(productsVirtual, virtualCount);
 
                 currentIndex = 0;
                 setProductFields(currentIndex);
@@ -286,11 +317,20 @@ public class ShowScreen extends JFrame implements ActionListener {
             // Test if the array is not empty
             try {
                 if (productsdb.length > 0) {
-                    if (currentIndex < productsdb.length - 1) {
-                        currentIndex++;
-                        setProductFields(currentIndex);
-                    } else {
-                        throw new Exception("This is the last item!");
+                    if (getProductParam() == 1) {
+                        if (currentIndex < trimmedProductsPhysical.length - 1) {
+                            currentIndex++;
+                            setProductFields(currentIndex);
+                        } else {
+                            throw new Exception("This is the last item!");
+                        }
+                    } else if (getProductParam() == 2){
+                        if (currentIndex < trimmedProductsVirtual.length - 1) {
+                            currentIndex++;
+                            setProductFields(currentIndex);
+                        } else {
+                            throw new Exception("This is the last item!");
+                        }
                     }
                 } else {
                     throw new Exception("Show the products first!");
@@ -303,15 +343,18 @@ public class ShowScreen extends JFrame implements ActionListener {
 
     // Setting the textField values
     private void setProductFields(int index) {
-        idField.setText(productsdb[index][0]);
-        nameField.setText(productsdb[index][1]);
-        priceField.setText(productsdb[index][2]);
-        quantityField.setText(productsdb[index][3]);
-
-        if (getProductParam() == 1){
-            locationField.setText(productsdb[index][4]);
-        } else if (getProductParam() == 2){
-            methodField.setText(productsdb[index][4]);
+        if (getProductParam() == 1) {
+            idField.setText(trimmedProductsPhysical[index][0]);
+            nameField.setText(trimmedProductsPhysical[index][1]);
+            priceField.setText(trimmedProductsPhysical[index][2]);
+            quantityField.setText(trimmedProductsPhysical[index][3]);
+            locationField.setText(trimmedProductsPhysical[index][4]);
+        } else if (getProductParam() == 2) {
+            idField.setText(trimmedProductsVirtual[index][0]);
+            nameField.setText(trimmedProductsVirtual[index][1]);
+            priceField.setText(trimmedProductsVirtual[index][2]);
+            quantityField.setText(trimmedProductsVirtual[index][3]);
+            methodField.setText(trimmedProductsVirtual[index][4]);
         }
     }
 }
