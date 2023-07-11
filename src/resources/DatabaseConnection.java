@@ -165,16 +165,23 @@ public class DatabaseConnection {
         return "funcionou";
     }
 
-    public void loginValidation(Connection connection, String username, String password){
+    public boolean loginValidation(Connection connection, String username, String password){
         Statement statement;
+        ResultSet resultSet;
+        boolean isValid = false;
         try {
             String query = String.format("select * from employee where username = '%s' and password = '%s'", username, password);
+            System.out.println(username + " " + password);
             statement = connection.createStatement();
-            statement.executeQuery(query);
-            System.out.println("Succesfull");
+            resultSet = statement.executeQuery(query);
+            if (resultSet.next()){
+                isValid = true;
+            }
+
         } catch (Exception e) {
             System.out.println(e);
         }
+        return isValid;
     }
 
 }

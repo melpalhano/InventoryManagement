@@ -81,8 +81,12 @@ public class Login extends JFrame implements ActionListener {
                     throw new IllegalArgumentException("Password field cannot be empty");
                 }
 
-                db.loginValidation(connection, jUserTextField.getText(), jPasswordTextField.getText());
-                JOptionPane.showMessageDialog(null, "Login Succesfull", "Error", JOptionPane.INFORMATION_MESSAGE);
+                if (db.loginValidation(connection, jUserTextField.getText(), jPasswordTextField.getText())){
+                    JOptionPane.showMessageDialog(null, "Login Succesfull", "Error", JOptionPane.INFORMATION_MESSAGE);
+
+                } else {
+                    throw new IllegalArgumentException("Invalid Credentials!");
+                }
                 ProductStock productStock = new ProductStock();
                 productStock.setVisible(true);
                 dispose();
